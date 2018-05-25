@@ -1,0 +1,6 @@
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\CrosswordLogic\bin\Debug\CrosswordLogic.dll
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\CrosswordLogic\bin\Debug\CrosswordLogic.pdb
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\CrosswordLogic\obj\Debug\CrosswordLogic.csprojResolveAssemblyReference.cache
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\CrosswordLogic\obj\Debug\CrosswordLogic.csproj.CoreCompileInputs.cache
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\CrosswordLogic\obj\Debug\CrosswordLogic.dll
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\CrosswordLogic\obj\Debug\CrosswordLogic.pdb

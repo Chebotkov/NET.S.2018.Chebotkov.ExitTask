@@ -1,0 +1,9 @@
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\bin\Debug\ConsoleTest.exe.config
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\bin\Debug\ConsoleTest.exe
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\bin\Debug\ConsoleTest.pdb
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\obj\Debug\ConsoleTest.csprojResolveAssemblyReference.cache
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\obj\Debug\ConsoleTest.csproj.CoreCompileInputs.cache
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\obj\Debug\ConsoleTest.exe
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\obj\Debug\ConsoleTest.pdb
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\bin\Debug\CrosswordLogic.dll
+D:\Courses\NET.S.2018.Chebotkov.ExitTask\CrosswordRealization\ConsoleTest\bin\Debug\CrosswordLogic.pdb
