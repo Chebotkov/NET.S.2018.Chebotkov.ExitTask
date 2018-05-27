@@ -9,30 +9,19 @@ namespace CrosswordLogic
 {
     public class Crossword
     {
-        private readonly string[] words;
         private char[,] crossword = new char[100,100];
-
-        /// <summary>
-        /// i - word, j involved indices.
-        /// </summary>
-        private Point[][] involvedIndices;
+        
+        private List<Word> words;
 
         public int crosswordSize = 100; 
 
         private IComparer stringComparer = new Comparer();
-        public string[] Words
-        {
-            get
-            {
-                return words;
-            }
-        }
 
         public Crossword(string[] words)
         {
-            this.words = words ?? throw new ArgumentNullException("{0} is null", nameof(words));
-            SortWords(words);
-            involvedIndices = new Point[words.Length][];
+            string [] newWords = words ?? throw new ArgumentNullException("{0} is null", nameof(words));
+            SortWords(newWords);
+            AddWords(newWords);
             //crosswordSize = GetMaxSize(words);
             //crossword = new char[crosswordSize, crosswordSize];
             LoadField();
@@ -40,41 +29,43 @@ namespace CrosswordLogic
 
         public char[,] GenerateCrossword()
         {
-            int previousIndex = -1;
             int currentIndex = 0;
-            int xBoarderIndex = 10;
-            int yBoarderIndex = 10;
-            Point pointInCrossword = new Point(0, 0);
             bool isHorizontal = true;
 
             bool isGenerated = false;
 
-            if (words.Length >= 2)
+            if (words.Count >= 2)
             {
-                string currentWord = words[currentIndex];
-                string nextWord = words[currentIndex + 1];
+                string currentWord = words[currentIndex].word;
+                string nextWord = words[currentIndex + 1].word;
                 for (int i = 0; i < currentWord.Length; i++)
                 {
                     for (int j = 0; j < nextWord.Length; j++)
                     {
                         if (currentWord[i] == nextWord[j])
                         {
+                            Point newWordStart = new Point(20, 20);
+                            Point newWordEnd = new Point(20, 20 + currentWord.Length - 1);
                             for (int k = 0; k < currentWord.Length; k++)
                             {
-                                crossword[20+j, k+20] = currentWord[k];
+                                crossword[newWordStart.y, newWordStart.x + k] = currentWord[k];
                             }
+
+                            /*
                             for (int k = 0; k < nextWord.Length; k++)
                             {
-                                crossword[k+20, 20+i] = nextWord[k];
-                            }
+                                crossword[k+20 - j, 20 + i] = nextWord[k];
+                            }*/
+                                                        
+                            words[currentIndex].SetWordCoordinates(newWordStart, newWordEnd);
+                            /*words[currentIndex + 1].SetWordCoordinates(new Point(20 + i, 20 - j), new Point(20 + i, 20 - j + nextWord.Length - 1));
 
-                            pointInCrossword.x = 20 + i;
-                            pointInCrossword.y = 20;
-                            involvedIndices[0] = new Point[words[0].Length];
-                            involvedIndices[1] = new Point[words[1].Length];
-                            involvedIndices[0][0] = new Point(20 + j, i + 20);
-                            involvedIndices[1][0] = new Point(20 + j, i + 20);
+                            Console.WriteLine(words[0].word);
+                            Console.WriteLine(words[0].wordStart.x + "; " + words[0].wordStart.y + " ... " + words[0].wordEnd.x + "; " + words[0].wordEnd.y);
+                            Console.WriteLine(words[1].word);
+                            Console.WriteLine(words[1].wordStart.x + "; " + words[1].wordStart.y + " ... " + words[1].wordEnd.x + "; " + words[1].wordEnd.y);*/
 
+                            isHorizontal = false;
                             isGenerated = true;
                             break;
                         }
@@ -84,71 +75,123 @@ namespace CrosswordLogic
                         break;
                     }
                 }
-                currentIndex = 1;
+                currentIndex = 0;
             }
 
-            while (currentIndex < words.Length- 1)
+            while (currentIndex < 3)// words.Count- 1)
             {
-                string currentWord = words[currentIndex];
-                string nextWord = words[currentIndex + 1];
+                Console.WriteLine("{0}. {1}", (currentIndex + 1), words[currentIndex+1].word);
+                string currentWord = words[currentIndex].word;
+                string nextWord = words[currentIndex + 1].word;
                 bool isConcated = false;
                 for (int i = 0; i < currentWord.Length; i++)
                 {
                     for (int j = 0; j < nextWord.Length; j++)
                     {
-                        if (currentWord[i] == nextWord[j])//&& !IsCrossing(currentIndex, i, j))
+                        try
                         {
-                            if (isHorizontal)
+                            if (currentWord[i] == nextWord[j])
                             {
-                                for (int k = pointInCrossword.y - j, m = 0 ; k < pointInCrossword.y - j + currentWord.Length; k++, m++)
+                                if (isHorizontal)
                                 {
-                                    crossword[j + pointInCrossword.x, k] = currentWord[m];
+                                    Point newWordStart = new Point(words[currentIndex].wordStart.x - j, words[currentIndex].wordStart.y + i);
+                                    Point newWordEnd = new Point(words[currentIndex].wordStart.x + (nextWord.Length - 1 - j), words[currentIndex].wordStart.y + i);
+                                    if (!IsCrossing(newWordStart, newWordEnd, currentIndex, words[currentIndex].word.Length))
+                                    {
+                                        for (int k = 0; k < nextWord.Length; k++)
+                                        {
+                                            crossword[newWordStart.y, newWordStart.x + k] = nextWord[k];
+                                        }
+
+                                        Console.WriteLine("Horizontal; " +nextWord);
+                                        words[currentIndex + 1].SetWordCoordinates(newWordStart, newWordEnd);
+                                        Console.WriteLine(words[currentIndex + 1].wordStart.x + "; " + words[currentIndex + 1].wordStart.y + " ... " + words[currentIndex + 1].wordEnd.x + "; " + words[currentIndex + 1].wordEnd.y);
+                                        isHorizontal = false;
+                                        isConcated = true;
+                                        break;
+                                    }
+
                                 }
-                                
-                                pointInCrossword = new Point(pointInCrossword.x + i, pointInCrossword.y + j);
-                            }
-                            else
-                            {
-                                for (int k = pointInCrossword.x - j, m =0; k < pointInCrossword.x - j + nextWord.Length; k++, m ++)
+                                else
                                 {
-                                    crossword[k, i+ pointInCrossword.y] = nextWord[m];
+                                    Point newWordStart = new Point(words[currentIndex].wordStart.x + i, words[currentIndex].wordStart.y - i);
+                                    Point newWordEnd = new Point(words[currentIndex].wordStart.x + i, words[currentIndex].wordStart.y + nextWord.Length - 1 - i);
+
+                                    if (!IsCrossing(newWordStart, newWordEnd, currentIndex, words[currentIndex].word.Length))
+                                    {
+                                        for (int k = 0; k < nextWord.Length; k++)
+                                        {
+                                            crossword[newWordStart.y + k, newWordStart.x ] = nextWord[k];
+                                        }
+
+                                        Console.WriteLine("Vertical; " + nextWord);
+                                        words[currentIndex + 1].SetWordCoordinates(newWordStart, newWordEnd);
+                                        Console.WriteLine(words[currentIndex + 1].wordStart.x + "; " + words[currentIndex + 1].wordStart.y + " ... " + words[currentIndex + 1].wordEnd.x + "; " + words[currentIndex + 1].wordEnd.y);
+                                        isHorizontal = true;
+                                        isConcated = true;
+                                        break;
+                                    }
+
                                 }
 
-                                pointInCrossword = new Point(pointInCrossword.x + i, pointInCrossword.y + j);
                             }
-
-                            /*involvedIndices[currentIndex][0] = new Point(j, i);
-                            involvedIndices[currentIndex + 1] = new Point[words[currentIndex + 1].Length];
-                            involvedIndices[currentIndex + 1][0] = new Point(j, i);*/
-                            isConcated = true;
-                            isHorizontal = isHorizontal == true ? false : true;
                         }
-
-                        if (isConcated)
+                        catch(IndexOutOfRangeException)
                         {
+                            Console.WriteLine(words[currentIndex + 1].word);
+                            isConcated = true;
                             break;
                         }
+
                     }
-                }
+                    if (isConcated)
+                    {
+                        break;
+                    }
+                } 
                 currentIndex++;
+                
+                if (!isConcated)
+                {
+                    if (currentIndex + 1 < words.Count)
+                    {
+                        Word word = words[currentIndex];
+                        words[currentIndex] = words[currentIndex + 1];
+                        words[currentIndex + 1] = word;
+                        currentIndex--;
+                    }
+                    Console.WriteLine("!");
+                }
             }
             
             return crossword;
         }
 
-        private bool IsCrossing(int wordIndex, int i, int j)
+        private bool IsCrossing(Point startPoint, Point endPoint, int currentIndex, int wordLength)
         {
-            /*if (involvedIndices[wordIndex] == null)
+            int i = 0;
+            foreach (Word word in words)
             {
-                return false;
-            }*/
-
-            foreach (Point p in involvedIndices[wordIndex])
-            {
-                if (p.x == i && p.y == j)
+                if (i == currentIndex)
                 {
-                    return true;
+                    i++;
+                    continue;
                 }
+
+                for (int k = 0; k < wordLength; k++)
+                {
+                    //instead of checking: is word horizontal or vertical.
+                    int x = startPoint.x + (endPoint.x - startPoint.x) + k;
+                    int y = startPoint.y + (endPoint.y - startPoint.y) + k;
+                    //
+
+                    if (word.wordStart.x <= x && word.wordEnd.x >= x && word.wordStart.y <= y && word.wordEnd.y >= y)
+                    {
+                        return true;
+                    }
+                }
+
+                i++;
             }
 
             return false;
@@ -185,11 +228,18 @@ namespace CrosswordLogic
             return size / 2;
         }
 
+        /// <summary>
+        /// Sorts words.
+        /// </summary>
+        /// <param name="words"></param>
         private void SortWords(string[] words)
         {
             Array.Sort(words, stringComparer);
         }
 
+        /// <summary>
+        /// Creates new crossword field.
+        /// </summary>
         private void LoadField()
         {
             for (int i = 0; i < crosswordSize; i++)
@@ -203,13 +253,42 @@ namespace CrosswordLogic
 
         private struct Point
         {
-            public int x;
-            public int y;
-
+            public readonly int x;
+            public readonly int y;
+            
             public Point(int x, int y)
             {
                 this.x = x;
                 this.y = y;
+            }
+        }
+
+        private class Word
+        {
+            public string word;
+            public Point wordStart;
+            public Point wordEnd;    
+
+            public Word(string word)
+            {
+                this.word = word;
+                wordStart = new Point();
+                wordEnd = new Point();
+            }
+
+            public void SetWordCoordinates(Point start, Point end)
+            {
+                wordStart = start;
+                wordEnd = end;
+            }
+        }
+
+        private void AddWords(string[] words)
+        {
+            this.words = new List<Word>();
+            foreach (string word in words)
+            {
+                this.words.Add(new Word(word));
             }
         }
     }
